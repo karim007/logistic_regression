@@ -2,9 +2,14 @@ import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
 
 class logistic_regression:
-    def __init__(self, data, labels, digits, learning_rate):
+    def __init__(self, data, labels, data_test, labels_test, classes, learning_rate, epochs, stochastic_gradient_descent):
+
+        self.data=data
+        self.data_test=data_test
+
+        self.labels_hot_encoded_training=labels
+        self.labels_hot_encoded_test = labels_test
         
-        self.data, self.labels_hot_encoded_training, self.data_test, self.labels_hot_encoded_test = self.split_training_test(data, label_new = self.hot_encoding(labels, digits))
         ##28*28
         img_format_size = self.data.shape[0]
         ## 60 000
@@ -21,10 +26,14 @@ class logistic_regression:
         self.batches = -(- images_total // self.batch_size)
 
         ## weight: normal distribution center in 0
-        self.W1 =np.random.randn(img_format_size, digits) 
+        self.W1 =np.random.randn(img_format_size, classes) 
         # One epoch is when an entiree dataset is passed forward and backward through the neural network.
-        self.epochs=10
-        self.learn()
+        self.epochs=epochs
+        if(stochastic_gradient_descent):
+            self.learn()
+        else:
+            self.learn_gradient()
+
 
 
     ## activation function that turns the ouptut of the first layer into probabilities that sum to one 
@@ -35,6 +44,7 @@ class logistic_regression:
 
         cache = {}
         cache["Z1"] = np.matmul(self.W1.T, X) 
+        
         cache["A1"] = self.softmax(cache["Z1"])     
         return cache
     
@@ -46,28 +56,9 @@ class logistic_regression:
 
 
 
-    def hot_encoding(self, labels, digits):
-        examples = labels.shape[0]  
-        labels = labels.reshape(1, examples)  
 
-        label_new = np.eye(digits)[labels.astype('int32')] 
-        label_new = label_new.T.reshape(digits, examples)  
-        return label_new
-
-    def split_training_test(self, data, label_new):
-        m = data.shape[0] -10000
-
-        data_train, data_test = data[:m].T, data[m:].T
-        labels_train, labels_test = label_new[:,:m], label_new[:,m:]
-
-        shuffle_index = np.random.permutation(m)
-
-        data_train, labels_train = data_train[:, shuffle_index], labels_train[:, shuffle_index]
-
-        return data_train, labels_train, data_test, labels_test
 
     def compute_loss(self, predicted):
-
         L_sum = np.sum(np.multiply(self.labels_hot_encoded_training, np.log(predicted)))
         total_image = self.labels_hot_encoded_training.shape[1]
         cost = -(1./total_image) * L_sum
@@ -95,7 +86,6 @@ class logistic_regression:
 
             cache = self.feed_forward(self.data)
             train_cost = self.compute_loss( cache["A1"])
-            cache = self.feed_forward(self.data_test)
            
             print("Epoch {}: training cost = {}".format(i+1 ,train_cost))
         
@@ -103,14 +93,28 @@ class logistic_regression:
         
         self.test()
 
+    def learn_gradient(self):
+
+        for i in range(self.epochs):
+            
+            cache = self.feed_forward(self.data)
+            grad = self.back_propagate(self.data, self.labels_hot_encoded_training, cache, self.data.shape[1])
+            self.W1  = self.W1 - self.learning_rate * grad
+
+            train_cost = self.compute_loss(cache["A1"])        
+            print("Epoch {}: training cost = {}".format(i+1 ,train_cost))
+        self.test()
 
 
     def test(self):
 
         cache = self.feed_forward(self.data_test)
         predictions = np.argmax(cache["A1"], axis=0)
+        
         labels = np.argmax(self.labels_hot_encoded_test, axis=0)
 
         print(classification_report(predictions, labels))
+
+
 
   
