@@ -1,11 +1,17 @@
-# Logistic regression (single layer) with MNIST dataset
-MNIST is a dataset consisting of 70,000 images of handwritten digits. Each training example comes with an associated label (0 to 9) indicating what digit it is. Each digit will be a greyscale with pixel-values from 0 to 255.
+# Logistic regression (single layer)
 
 
 # Install dependencies
 ```bash
 pip install -r requirements
 ```
+
+# Select the dataset
+Under the folder "data" there is different dataset. Example Mnist: MNIST is a dataset consisting of 70,000 images of handwritten digits. Each training example comes with an associated label (0 to 9) indicating what digit it is. Each digit will be a greyscale with pixel-values from 0 to 255.
+
+You can create your own dataset from sorted pictures with the following library: https://github.com/karim007/converter_grayscale_image_dataset_to_numpy_array
+
+
 # Run the algorithm
 
 ```python
