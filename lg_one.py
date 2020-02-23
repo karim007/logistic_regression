@@ -6,7 +6,7 @@ class logistic_regression:
 
         self.data=data
         self.data_test=data_test
-
+ 
         self.labels_hot_encoded_training=labels
         self.labels_hot_encoded_test = labels_test
         
@@ -45,7 +45,8 @@ class logistic_regression:
         cache = {}
         cache["Z1"] = np.matmul(self.W1.T, X) 
         
-        cache["A1"] = self.softmax(cache["Z1"])     
+        cache["A1"] = self.softmax(cache["Z1"])   
+
         return cache
     
     def back_propagate(self, X, Y, cache, m_batch):
@@ -115,6 +116,24 @@ class logistic_regression:
 
         print(classification_report(predictions, labels))
 
+        index = int(input("Enter a random index to test the model (the maximum value is {} ):  ".format(self.data_test.shape[1])))
+
+        if(index>= self.data_test.shape[1]):
+            print("Index higher then the dataset")
+            exit()
+
+        self.random_check(index)
 
 
-  
+     
+
+    
+    def random_check(self, index):
+
+        selected_picture = self.data_test.T[index]
+        cache = self.feed_forward(selected_picture.T)
+        selected_label = self.labels_hot_encoded_test.T[index]
+
+        print("Label is {}".format(np.argmax(selected_label.T)))
+        print("Prediction is {}".format(np.argmax(np.round(cache["A1"],2))))
+

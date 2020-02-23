@@ -17,9 +17,6 @@ You can create your own dataset from sorted pictures with the following library:
 ```python
 Python main.py
 ```
-
-
-
 ## Logistic regression
 It is a model that is used to predict the probabilities of the different possible outcomes. In our case the 0-9 digits.
 
