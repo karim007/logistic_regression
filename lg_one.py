@@ -116,19 +116,18 @@ class logistic_regression:
 
         print(classification_report(predictions, labels))
 
-        index = int(input("Enter a random index to test the model (the maximum value is {} ):  ".format(self.data_test.shape[1])))
-
-        if(index>= self.data_test.shape[1]):
-            print("Index higher then the dataset")
-            exit()
-
-        self.random_check(index)
+        self.random_check()
 
 
      
 
     
-    def random_check(self, index):
+    def random_check(self):
+
+        index = int(input("Enter a random index to test the model (the maximum value is {} ):  ".format(self.data_test.shape[1])))
+        if(index>= self.data_test.shape[1]):
+            print("Index higher then the dataset")
+            exit()
 
         selected_picture = self.data_test.T[index]
         cache = self.feed_forward(selected_picture.T)
